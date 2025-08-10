@@ -2,13 +2,13 @@
 set -e
 source .env
 
-# 1. Génération certificats SSL
+# Generation certificats SSL
 docker compose run --rm certbot
 
-# 2. Initialisation DKIM
+# DKIM
 docker compose run --rm mailserver setup config dkim
 
-# 3. Instructions DNS
+# DNS
 echo "---- ENREGISTREMENTS DNS ----"
 echo "MX: ${DOMAIN} -> ${HOSTNAME} (priorité 10)"
 echo "A : ${HOSTNAME} -> IP publique"

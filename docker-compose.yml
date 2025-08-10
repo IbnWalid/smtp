@@ -11,7 +11,6 @@ services:
       - "25:25"      # SMTP
       - "587:587"    # Submission
       - "465:465"    # SMTPS
-      - "993:993"    # IMAPS si besoin
     volumes:
       - ./config/maildata:/var/mail
       - ./config/mailstate:/var/mail-state
