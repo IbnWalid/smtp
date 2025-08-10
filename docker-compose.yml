@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  mailserver:
+    image: mailserver/docker-mailserver:latest
+    container_name: mailserver
+    hostname: ${HOSTNAME}
+    domainname: ${DOMAIN}
+    env_file: .env
+    ports:
+      - "25:25"      # SMTP
+      - "587:587"    # Submission
+      - "465:465"    # SMTPS
+      - "993:993"    # IMAPS si besoin
+    volumes:
+      - ./config/maildata:/var/mail
+      - ./config/mailstate:/var/mail-state
+      - ./config/maillogs:/var/log/mail
+      - ./config/config:/tmp/docker-mailserver
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+    cap_add:
+      - NET_ADMIN
+      - SYS_PTRACE
+    restart: always
+
+  certbot:
+    image: certbot/certbot:latest
+    container_name: certbot
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt
+      - /var/lib/letsencrypt:/var/lib/letsencrypt
+    entrypoint: >
+      sh -c "certbot certonly --standalone --preferred-challenges http
+             -d ${HOSTNAME} --agree-tos -m ${EMAIL_ADMIN} --no-eff-email"
